@@ -346,7 +346,7 @@ function calcDir() {
   }
 
   const Zw = Wz * dzw;
-  const dZ = Zw - z;
+  const dZ = Zw + z;
 
   state.dir = { dZ, Zw, z };
 
