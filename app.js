@@ -31,6 +31,14 @@ const MORTARS = {
     trajectories: ['mortar', 'flat'],
     defaultTrajectory: 'mortar',
     tableTitle: 'Таблица стрельбы 2Б9',
+  },
+   'd30': {
+    name: '2А18 Д-30 122мм',
+    mil: 6000,
+    heightFormula: 'd30',
+    trajectories: ['mortar', 'flat'],
+    defaultTrajectory: 'flat',
+    tableTitle: 'Таблица стрельбы 2А18 Д-30',
   }
 };
 
@@ -137,11 +145,12 @@ function getCurrentTrajectory() {
 }
 function isMortarTrajectory() { return getCurrentTrajectory() === 'mortar'; }
 function rangeSignForCurrentSetup() {
-  if (currentMortar === '2b9') return isMortarTrajectory() ? 1 : -1;
+  if (currentMortar === '2b9' || currentMortar === 'd30') return isMortarTrajectory() ? 1 : -1;
   return -1;
 }
 function getHeightModeLabel() {
   if (currentMortar === '2b9') return isMortarTrajectory() ? '2Б9 (мортирная)' : '2Б9 (настильная)';
+  if (currentMortar === 'd30') return isMortarTrajectory() ? '2А18 Д-30 (мортирная)' : '2А18 Д-30 (настильная)';
   return `${MORTARS[currentMortar].name} (мортирная)`;
 }
 function updateTrajectoryOptions(mortar) {
@@ -367,7 +376,7 @@ function calcHeight() {
   let Ph = (deltaH / 100) * dph;
   let dP = Ph;
   let detailTail = '';
-  if (currentMortar === '2b9') {
+  if (currentMortar === '2b9' || currentMortar === 'd30') {
     if (isMortarTrajectory()) {
       dP = -1 * Ph;
       detailTail = 'Для 2Б9 (мортирная): ΔП = −Ph';
@@ -706,15 +715,15 @@ function switchTab(name) {
 // ============== ИНИЦИАЛИЗАЦИЯ ==============
 // ============== СМЕНА ЗАРЯДОВ ПО ТИПУ МИНОМЁТА ==============
 const CHARGES_2B14 = [
-  { value: 'osn', label: 'Основной' },
+  { value: 'osn', label: 'Основной', selected: true},
   { value: '1',   label: '1-й' },
-  { value: '2',   label: '2-й', selected: true },
+  { value: '2',   label: '2-й' },
   { value: '3',   label: '3-й' },
   { value: 'dal', label: 'Дальнобойный' }
 ];
 const CHARGES_2B11 = [
-  { value: '1', label: 'ОФ, #1' },
-  { value: '2', label: 'ОФ, #2', selected: true },
+  { value: '1', label: 'ОФ, #1', selected: true  },
+  { value: '2', label: 'ОФ, #2'},
   { value: '3', label: 'ОФ, #3' },
   { value: '4', label: 'ОФ, #4' },
   { value: '5', label: 'ОФ, #5' },
@@ -724,11 +733,23 @@ const CHARGES_2B9 = [
   { value: 'of1', label: 'ОФ, 1-й', selected: true },
   { value: 'dal', label: 'ОФ, дальнобойный' }
 ];
+const CHARGES_D30 = [
+  { value: '6', label: 'Ш, 6-й', selected: true },
+  { value: '5', label: 'Ш, 5-й' },
+  { value: '4', label: 'Ш, 4-й' },
+  { value: '3', label: 'Ш, 3-й' },
+  { value: '2', label: 'Ш, 2-й' },
+  { value : '1', label: 'Ш, 1-й'},
+  { value: 'smal', label: 'Ш, уменьш.'},
+  { value: 'full', label: 'Ш, полный' }
+];
 
 function updateChargeOptions(mortar) {
   const sel = $('global-charge');
   if (!sel) return;
-  const charges = mortar === '2b11' ? CHARGES_2B11 : (mortar === '2b9' ? CHARGES_2B9 : CHARGES_2B14);
+  const charges = mortar === '2b11' ? CHARGES_2B11 
+    : (mortar === '2b9' ? CHARGES_2B9
+    : (mortar === 'd30' ? CHARGES_D30 : CHARGES_2B14));
   const curVal = sel.value;
   sel.innerHTML = '';
   charges.forEach(c => {
@@ -1019,90 +1040,4 @@ function installWindWidget() {
 // Экспорт для тестов
 if (typeof module !== 'undefined') {
   module.exports = { parseAngle, formatAngle, decomposeWind, decomposeWindTable, decomposeWindBy, MORTARS };
-}
-
-
-// ===== PATCH D-30 =====
-MORTARS['d30'] = {
-  name: '2А18 Д-30 122мм',
-  mil: 6000,
-  heightFormula: 'd30',
-  trajectories: ['mortar', 'flat'],
-  defaultTrajectory: 'flat',
-  tableTitle: 'Таблица стрельбы 2А18 Д-30'
-};
-
-function rangeSignForCurrentSetup() {
-  if (currentMortar === '2b9' || currentMortar === 'd30') return isMortarTrajectory() ? 1 : -1;
-  return -1;
-}
-
-function getHeightModeLabel() {
-  if (currentMortar === '2b9') return isMortarTrajectory() ? '2Б9 (мортирная)' : '2Б9 (настильная)';
-  if (currentMortar === 'd30') return isMortarTrajectory() ? '2А18 Д-30 (мортирная)' : '2А18 Д-30 (настильная)';
-  return `${MORTARS[currentMortar].name} (мортирная)`;
-}
-
-
-function updateChargeOptions(mortar) {
-  const sel = $('global-charge');
-  if (!sel) return;
-  const charges = mortar === '2b11' ? CHARGES_2B11
-    : (mortar === '2b9' ? CHARGES_2B9
-    : (mortar === 'd30' ? CHARGES_D30 : CHARGES_2B14));
-  sel.innerHTML = '';
-  charges.forEach(c => {
-    const opt = document.createElement('option');
-    opt.value = c.value;
-    opt.textContent = c.label;
-    sel.appendChild(opt);
-  });
-  const vals = charges.map(c => c.value);
-  if (!vals.includes(sel.value)) sel.value = vals[0];
-}
-
-function calcHeight() {
-  const hc = parseNum($('h-target').value);
-  const ho = parseNum($('h-weapon').value);
-  const dPh = parseNum($('h-dph').value);
-  const S = parseNum($('h-dist').value);
-
-  if (!isFinite(hc) || !isFinite(ho) || !isFinite(dPh)) {
-    $('h-result').hidden = true; return;
-  }
-
-  const dh = hc - ho;
-  const mortarTraj = isMortarTrajectory();
-  let Ph = 0;
-  let dP = 0;
-  let detail = '';
-
-  if (currentMortar === '2b9' || currentMortar === 'd30') {
-    if (mortarTraj) {
-      Ph = (dh / 100) * dPh;
-      dP = -Ph;
-      detail = `Мортирная: Ph = (Δh/100) × ΔПh = (${dh}/100) × ${dPh} = ${Ph.toFixed(2)}\nΔП = -Ph = ${dP.toFixed(2)}`;
-    } else {
-      if (!isFinite(S) || S === 0) {
-        showResult('h-result', 'Ошибка', 'Для настильной траектории нужна дистанция S > 0.', true);
-        return;
-      }
-      Ph = ((dh / 100) * dPh) + (dh / (0.001 * S));
-      dP = Ph;
-      detail = `Настильная: Ph = (Δh/100) × ΔПh + Δh/(0.001×S) = (${dh}/100)×${dPh} + ${dh}/(0.001×${S}) = ${Ph.toFixed(2)}\nΔП = Ph = ${dP.toFixed(2)}`;
-    }
-  } else {
-    Ph = (dh / 100) * dPh;
-    dP = Ph;
-    detail = `Ph = (Δh/100) × ΔПh = (${dh}/100) × ${dPh} = ${Ph.toFixed(2)}\nΔП = ${dP.toFixed(2)}`;
-  }
-  
-
-
-  state.height = { Ph, dP };
-  showResult(
-    'h-result',
-    `ΔП = ${dP.toFixed(2)} тыс.`,
-    `Режим: ${getHeightModeLabel()}\n${detail}`
-  );
 }

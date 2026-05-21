@@ -696,8 +696,9 @@ const FIRING_TABLES_2B9 = {
 };
 
 function getTablesForMortar(mortar, trajectory) {
-  if (mortar === "2b11") return FIRING_TABLES_2B11;
-  if (mortar === "2b9") return (FIRING_TABLES_2B9[trajectory] || FIRING_TABLES_2B9.mortar);
+  if (mortar === '2b11') return FIRING_TABLES_2B11;
+  if (mortar === '2b9') return (FIRING_TABLES_2B9[trajectory] || FIRING_TABLES_2B9.mortar);
+  if (mortar === 'd30') return (FIRING_TABLES_D30[trajectory] || FIRING_TABLES_D30.mortar);
   return FIRING_TABLES_2B14;
 }
 
@@ -734,42 +735,10 @@ if (typeof module !== "undefined" && module.exports) {
 
 
 // ===== D-30 TABLES =====
-const CHARGES_D30 = [
-  { value: 'spec', label: 'Кум, спец.' },
-  { value: '6', label: 'Ш, 6-й' },
-  { value: '5', label: 'Ш, 5-й' },
-  { value: '4', label: 'Ш, 4-й' },
-  { value: '3', label: 'Ш, 3-й' },
-  { value: '2', label: 'Ш, 2-й' },
-  { value : '1', label: 'Ш, 1-й'},
-  { value: 'smal', label: 'Ш, уменьш.'},
-  { value: 'full', label: 'Ш, полный' }
-];
+// CHARGES_D30 объявлена в app.js (со свойством selected по умолчанию)
 
 const FIRING_TABLES_D30 = {
   flat: {
-    spec: { name: 'Кум, спец.', rows: [
-  [100, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [200, 1.7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [300, 2.6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [400, 3.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [500, 4.3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [600, 5.2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [700, 6.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [800, 7.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [900, 7.9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [1000, 8.8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [1100, 9.7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [1200, 10.6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [1300, 11.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [1400, 12.4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [1500, 13.4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [1600, 14.3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [1700, 15.2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [1800, 16.2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [1900, 17.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [2000, 18.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-]},
     '6': { name: 'Ш, 6-й', rows: [
   [200, 37, 6, 10, 0, -2, 0, 0, 0, 0, -0.0, 0.0, 1.3, 0, 1],
   [300, 56, 6, 10, 0, -2, 0, 0, 1, 0, -0.0, 0.0, 1.9, 0, 1],
@@ -1350,9 +1319,4 @@ const FIRING_TABLES_D30 = {
   }
 };
 
-function getTablesForMortar(mortar, trajectory) {
-  if (mortar === '2b11') return FIRING_TABLES_2B11;
-  if (mortar === '2b9') return (FIRING_TABLES_2B9[trajectory] || FIRING_TABLES_2B9.mortar);
-  if (mortar === 'd30') return (FIRING_TABLES_D30[trajectory] || FIRING_TABLES_D30.flat);
-  return FIRING_TABLES_2B14;
-}
+
