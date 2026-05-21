@@ -355,7 +355,7 @@ function calcDir() {
     `ΔZΣ = ${dZ >= 0 ? '+' : ''}${dZ.toFixed(1)} тыс. (к угломеру)`,
     `${windDetail}\n` +
     `Z_W = Wz · ΔZ_W = ${Wz.toFixed(2)} · ${dzw} = ${Zw.toFixed(2)} тыс.\n` +
-    `ΔZΣ = Z_W − Z = ${Zw.toFixed(2)} − ${z} = ${dZ.toFixed(2)} тыс.\n` +
+    `ΔZΣ = Z_W + Z = ${Zw.toFixed(2)} + ${z} = ${dZ.toFixed(2)} тыс.\n` +
     `→ прибавить к угломеру`
   );
 }
