@@ -39,6 +39,14 @@ const MORTARS = {
     trajectories: ['mortar', 'flat'],
     defaultTrajectory: 'flat',
     tableTitle: 'Таблица стрельбы 2А18 Д-30',
+  },
+  'm119': {
+    name: 'M119 105мм',
+    mil: 6400,
+    heightFormula: 'd30',
+    trajectories: ['mortar', 'flat'],
+    defaultTrajectory: 'flat',
+    tableTitle: 'Таблица стрельбы M119 (105мм, система 64-00)',
   }
 };
 
@@ -145,12 +153,13 @@ function getCurrentTrajectory() {
 }
 function isMortarTrajectory() { return getCurrentTrajectory() === 'mortar'; }
 function rangeSignForCurrentSetup() {
-  if (currentMortar === '2b9' || currentMortar === 'd30') return isMortarTrajectory() ? 1 : -1;
+  if (currentMortar === '2b9' || currentMortar === 'd30' || currentMortar === 'm119') return isMortarTrajectory() ? 1 : -1;
   return -1;
 }
 function getHeightModeLabel() {
   if (currentMortar === '2b9') return isMortarTrajectory() ? '2Б9 (мортирная)' : '2Б9 (настильная)';
   if (currentMortar === 'd30') return isMortarTrajectory() ? '2А18 Д-30 (мортирная)' : '2А18 Д-30 (настильная)';
+  if (currentMortar === 'm119') return isMortarTrajectory() ? 'M119 (мортирная)' : 'M119 (настильная)';
   return `${MORTARS[currentMortar].name} (мортирная)`;
 }
 function updateTrajectoryOptions(mortar) {
@@ -422,15 +431,15 @@ function calcHeight() {
   let Ph = (deltaH / 100) * dph;
   let dP = Ph;
   let detailTail = '';
-  if (currentMortar === '2b9' || currentMortar === 'd30') {
+  if (currentMortar === '2b9' || currentMortar === 'd30' || currentMortar === 'm119') {
     if (isMortarTrajectory()) {
       dP = -1 * Ph;
-      detailTail = 'Для 2Б9 (мортирная): ΔП = −Ph';
+      detailTail = `Для ${MORTARS[currentMortar].name} (мортирная): ΔП = −Ph`;
     } else {
       const extra = isFinite(S) && S !== 0 ? (deltaH / (0.001 * S)) : 0;
       Ph = Ph + extra;
       dP = Ph;
-      detailTail = `Для 2Б9 (настильная): ΔП = Ph${isFinite(S) && S !== 0 ? `, добавка угла места цели = ${extra.toFixed(2)}` : ', добавка угла места цели требует дистанцию S'}`;
+      detailTail = `Для ${MORTARS[currentMortar].name} (настильная): ΔП = Ph${isFinite(S) && S !== 0 ? `, добавка угла места цели = ${extra.toFixed(2)}` : ', добавка угла места цели требует дистанцию S'}`;
     }
   } else {
     detailTail = `Для ${MORTARS[currentMortar].name}: ΔП = Ph`;
@@ -789,13 +798,24 @@ const CHARGES_D30 = [
   { value: 'smal', label: 'Ш, уменьш.'},
   { value: 'full', label: 'Ш, полный' }
 ];
+const CHARGES_M119 = [
+  { value: 'M0', label: 'ОФ, 0-й', selected: true },
+  { value: 'M1', label: 'ОФ, 1-й' },
+  { value: 'M2', label: 'ОФ, 2-й' },
+  { value: 'M3', label: 'ОФ, 3-й' },
+  { value: 'M4', label: 'ОФ, 4-й' },
+  { value: 'M5', label: 'ОФ, 5-й' },
+  { value: 'M6', label: 'ОФ, 6-й' },
+  { value: 'M7', label: 'ОФ, 7-й' }
+];
 
 function updateChargeOptions(mortar) {
   const sel = $('global-charge');
   if (!sel) return;
   const charges = mortar === '2b11' ? CHARGES_2B11 
     : (mortar === '2b9' ? CHARGES_2B9
-    : (mortar === 'd30' ? CHARGES_D30 : CHARGES_2B14));
+    : (mortar === 'd30' ? CHARGES_D30
+    : (mortar === 'm119' ? CHARGES_M119 : CHARGES_2B14)));
   const curVal = sel.value;
   sel.innerHTML = '';
   charges.forEach(c => {
