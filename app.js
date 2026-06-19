@@ -47,6 +47,14 @@ const MORTARS = {
     trajectories: ['mortar', 'flat'],
     defaultTrajectory: 'flat',
     tableTitle: 'Таблица стрельбы M119 (105мм, система 64-00)',
+  },
+  'm224':{
+	name: 'M224 60мм',
+    mil: 6400,
+    heightFormula: 'd30',
+    trajectories: ['mortar'],
+    defaultTrajectory: 'mortar',
+    tableTitle: 'Таблица стрельбы M224 (60мм, система 64-00)',
   }
 };
 
@@ -153,6 +161,7 @@ function getCurrentTrajectory() {
 }
 function isMortarTrajectory() { return getCurrentTrajectory() === 'mortar'; }
 function rangeSignForCurrentSetup() {
+  if (currentMortar === 'm224') return 1;
   if (currentMortar === '2b9' || currentMortar === 'd30' || currentMortar === 'm119') return isMortarTrajectory() ? 1 : -1;
   return -1;
 }
@@ -431,7 +440,7 @@ function calcHeight() {
   let Ph = (deltaH / 100) * dph;
   let dP = Ph;
   let detailTail = '';
-  if (currentMortar === '2b9' || currentMortar === 'd30' || currentMortar === 'm119') {
+  if (currentMortar === '2b9' || currentMortar === 'd30' || currentMortar === 'm119' || currentMortar === 'm224') {
     if (isMortarTrajectory()) {
       dP = -1 * Ph;
       detailTail = `Для ${MORTARS[currentMortar].name} (мортирная): ΔП = −Ph`;
@@ -819,6 +828,13 @@ const CHARGES_M119 = [
   { value: 'M6', label: 'ОФ, 6-й' },
   { value: 'M7', label: 'ОФ, 7-й' }
 ];
+const CHARGES_M224 = [
+  { value: '0', label: 'ОФ, #0', selected: true  },
+  { value: '1', label: 'ОФ, #1'},
+  { value: '2', label: 'ОФ, #2'},
+  { value: '3', label: 'ОФ, #3' },
+  { value: '4', label: 'ОФ, #4' }
+];
 
 function updateChargeOptions(mortar) {
   const sel = $('global-charge');
@@ -826,7 +842,8 @@ function updateChargeOptions(mortar) {
   const charges = mortar === '2b11' ? CHARGES_2B11 
     : (mortar === '2b9' ? CHARGES_2B9
     : (mortar === 'd30' ? CHARGES_D30
-    : (mortar === 'm119' ? CHARGES_M119 : CHARGES_2B14)));
+	: (mortar === 'm224' ? CHARGES_M224
+    : (mortar === 'm119' ? CHARGES_M119 : CHARGES_2B14))));
   const curVal = sel.value;
   sel.innerHTML = '';
   charges.forEach(c => {
